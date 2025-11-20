@@ -20,12 +20,12 @@ export default function ProductCard({
     >
       <CardContent className="flex flex-col items-center p-4">
         <div className="w-20 h-20 relative mb-2">
-          <Image
-            src={`${MEDIA_URL}/${product.image}`}
-            alt={product.name}
-            fill
-            className="object-contain"
-          />
+          <img
+  src={`${MEDIA_URL}/${product.image}`}
+  alt={product.name}
+  className="object-contain w-full h-full"
+/>
+     
         </div>
         <span className="text-sm font-medium">{product.name}</span>
       </CardContent>

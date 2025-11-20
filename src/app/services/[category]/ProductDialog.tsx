@@ -70,12 +70,11 @@ export default function ProductDialog({
         {selectedProduct ? (
           <div className="flex flex-col items-center gap-4">
             <div className="w-40 h-40 relative">
-              <Image
-                src={`${MEDIA_URL}/${selectedProduct.image}`}
-                alt={selectedProduct.name}
-                fill
-                className="object-contain"
-              />
+              <img
+  src={`${MEDIA_URL}/${selectedProduct.image}`}
+  alt={selectedProduct.name}
+  className="object-contain w-full h-full"
+/>
             </div>
 
             {selectedProduct.video && (

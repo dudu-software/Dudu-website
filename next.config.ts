@@ -1,15 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-        {
-        protocol: "https",
-        hostname: "backend.dudusoftware.com",
-        pathname: "/**",
-      },
-    ],
-  },
+images: {
+  remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "backend.dudusoftware.com",
+      port: "",
+      pathname: "/**",
+    },
+  ],
+},
+
 };
 
 export default nextConfig;
