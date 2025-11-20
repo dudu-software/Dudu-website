@@ -49,10 +49,10 @@ export function ServicesSection() {
                 <CardContent className="flex flex-col items-center justify-center p-4">
                   <div className="w-14 h-14 relative mb-2">
                     <img
-  src={`${MEDIA_URL}/${service.image}`}
-  alt={service.name}
-  className="object-contain w-full h-full"
-/>
+                      src={`${MEDIA_URL}/${service.image}`}
+                      alt={service.name}
+                      className="object-contain w-full h-full"
+                    />
                     {/* <Image
                       src={`${MEDIA_URL}/${service.image}`}
                       alt={service.name}
