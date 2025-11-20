@@ -24,7 +24,7 @@ export function Header() {
 
   const customerMenu = [
     { name: "Home", href: "/", icon: Home },
-    { name: "Orders", href: "/orders", icon: Package },
+
     { name: "Cart", href: "/cart", icon: ShoppingCart },
     { name: "Profile", href: "/profile", icon: User },
   ];
