@@ -1,4 +1,6 @@
+"use client";
 import { Header } from "@/components/Header";
+import { getUserType } from "@/lib/authUtils";
 import "./globals.css";
 
 export default function RootLayout({
@@ -6,10 +8,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const userType = getUserType();
+  const isLoggedIn = !!userType;
+
   return (
     <html lang="en">
       <body>
-        <Header />
+        {isLoggedIn && <Header />}
         {children}
       </body>
     </html>

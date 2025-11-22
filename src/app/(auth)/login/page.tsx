@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -17,21 +16,19 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      await login(username, password); // just saves token, no redirect
+      await login(username, password);
       toast.success("Login successful!", {
         description: `Welcome back, ${username}!`,
       });
 
-      // Determine where to redirect based on userType
-      const userType = getUserType(); // admin, merchant, or other
+      const userType = getUserType();
       if (userType === "admin") {
         router.push("/admin");
       } else if (userType === "merchant") {
         router.push("/merchant");
       } else {
-        router.push("/"); // default route for other users
+        router.push("/");
       }
     } catch (error: any) {
       console.error("Login error:", error);
@@ -44,34 +41,76 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-6 bg-white shadow-md rounded-xl">
-        <h1 className="text-2xl font-semibold mb-6 text-center">Login</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium">Username</label>
-            <Input
-              type="text"
-              placeholder="Enter username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+    <div className="flex min-h-screen">
+      {/* Left side - Dark */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 to-gray-800 flex-col justify-between p-12">
+        <div>
+          <h1 className="text-4xl font-bold text-blue-600">DuDu</h1>
+        </div>
+
+        <div className="text-gray-400 text-sm">DuDU Software</div>
+      </div>
+
+      {/* Right side - Login Form */}
+      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md space-y-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900">Login to Panel</h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Enter your credentials to access downtown
+            </p>
           </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium">Password</label>
-            <Input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Enter your email..."
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </Button>
+
+            <div className="text-center text-xs text-gray-500 mt-6">
+              By clicking login, you agree to our Terms of Service and Privacy
+              Policy
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Mobile - Show brand at top */}
+      <div className="lg:hidden absolute top-8 left-8">
+        <h1 className="text-4xl font-bold text-blue-600">DuDu</h1>
       </div>
     </div>
   );

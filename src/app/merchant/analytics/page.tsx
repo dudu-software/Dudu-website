@@ -131,11 +131,11 @@ export default function MerchantAnalytics() {
   ).length;
   const cancelledOrders = orders.filter((o) => o.status === "cancelled").length;
 
-  // Extract unique customers from orders
+  //  customers from orders extraced here, no specific api
   const uniqueCustomerIds = new Set(orders.map((o) => o.userId));
   const totalCustomers = uniqueCustomerIds.size;
 
-  // Inventory value (stock value at cost)
+  // Inventory value , totalled
   const inventoryValue = products.reduce(
     (sum, p) => sum + p.price * (p.stockQuantity || 0),
     0

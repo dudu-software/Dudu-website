@@ -23,6 +23,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Search,
 } from "lucide-react";
 
 export default function MerchantLayout({ children }: { children: ReactNode }) {
@@ -97,7 +98,7 @@ export default function MerchantLayout({ children }: { children: ReactNode }) {
     {
       href: "/merchant/explore",
       label: "Explore",
-      icon: <Tag className="w-5 h-5" />,
+      icon: <Search className="w-5 h-5" />,
     },
   ];
 
