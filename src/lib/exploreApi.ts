@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 const CORS_PROXY = "https://corsproxy.io/?";
 
 function sleep(ms: number) {
@@ -35,7 +34,7 @@ export async function fetchCountries(input: string, apiKey?: string) {
 // FETCH PLACE DETAILS
 // -------------------------
 export async function fetchPlaceDetails(placeId: string, apiKey: string) {
-  const detailsUrl = `${CORS_PROXY}https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,formatted_phone_number,international_phone_number,types,photos&key=${apiKey}`;
+  const detailsUrl = `${CORS_PROXY}https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,formatted_phone_number,international_phone_number,types,photos,rating,user_ratings_total&key=${apiKey}`;
   const res = await fetch(detailsUrl);
   const data = await res.json();
   return data.result;
@@ -65,20 +64,25 @@ export async function fetchTextSearchPage({
 export async function fetchPlacesWithDetails({
   location,
   keyword,
+  additionalKeyword,
   apiKey,
   pagetoken,
 }: {
   location: string;
   keyword: string;
+  additionalKeyword?: string;
   apiKey: string;
   pagetoken?: string | null;
 }) {
   if (!apiKey) return { results: [], nextPageToken: null };
-
-  // Build query
-  const q = `${keyword} in ${location}`;
+  
+  // Build query with additional keyword if provided
+  const keywordPart = additionalKeyword 
+    ? `${keyword} ${additionalKeyword}` 
+    : keyword;
+  const q = `${keywordPart} in ${location}`;
   const query = encodeURIComponent(q);
-
+  
   // Fetch page with retry for pagetoken
   let data;
   if (pagetoken) {
@@ -92,10 +96,10 @@ export async function fetchPlacesWithDetails({
   } else {
     data = await fetchTextSearchPage({ query, pagetoken: null, apiKey });
   }
-
+  
   const places = data.results || [];
   const nextPageToken = data.next_page_token || null;
-
+  
   // Fetch details for each place
   const detailed = await Promise.all(
     places.map(async (p: any) => {
@@ -113,6 +117,8 @@ export async function fetchPlacesWithDetails({
             null,
           types: d?.types || p.types || [],
           photoReference: photoRef || null,
+          rating: d?.rating || p.rating || null,
+          userRatingsTotal: d?.user_ratings_total || p.user_ratings_total || null,
         };
       } catch (err) {
         const photoRef = p.photos?.[0]?.photo_reference || null;
@@ -123,11 +129,13 @@ export async function fetchPlacesWithDetails({
           phone: null,
           types: p.types || [],
           photoReference: photoRef,
+          rating: p.rating || null,
+          userRatingsTotal: p.user_ratings_total || null,
         };
       }
     })
   );
-
+  
   return {
     results: detailed,
     nextPageToken,

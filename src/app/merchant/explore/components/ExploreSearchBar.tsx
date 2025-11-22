@@ -10,6 +10,7 @@ interface ExploreSearchBarProps {
     country: string;
     city: string;
     keyword: string;
+    additionalKeyword: string;
   }) => void;
 }
 
@@ -27,6 +28,7 @@ export default function ExploreSearchBar({ onSearch }: ExploreSearchBarProps) {
 
   const [city, setCity] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [additionalKeyword, setAdditionalKeyword] = useState("");
   const [keywordDropdownOpen, setKeywordDropdownOpen] = useState(false);
 
   const quickCategories = [
@@ -44,7 +46,7 @@ export default function ExploreSearchBar({ onSearch }: ExploreSearchBarProps) {
     <div className="space-y-4">
       <div className="flex flex-wrap gap-4 items-start">
         {/* Country */}
-        <div className="relative w-full sm:w-1/3">
+        <div className="relative w-full sm:w-1/5">
           <label className="text-sm text-gray-600">Country</label>
           <div
             onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
@@ -72,7 +74,7 @@ export default function ExploreSearchBar({ onSearch }: ExploreSearchBarProps) {
         </div>
 
         {/* City */}
-        <div className="w-full sm:w-1/4">
+        <div className="w-full sm:w-1/6">
           <label className="text-sm text-gray-600">City</label>
           <Input
             value={city}
@@ -82,7 +84,7 @@ export default function ExploreSearchBar({ onSearch }: ExploreSearchBarProps) {
         </div>
 
         {/* Keyword  */}
-        <div className="relative w-full sm:w-1/3">
+        <div className="relative w-full sm:w-1/5">
           <label className="text-sm text-gray-600">Category</label>
           <div
             onClick={() => setKeywordDropdownOpen(!keywordDropdownOpen)}
@@ -112,6 +114,16 @@ export default function ExploreSearchBar({ onSearch }: ExploreSearchBarProps) {
           )}
         </div>
 
+        {/* Additional Keyword */}
+        <div className="w-full sm:w-1/5">
+          <label className="text-sm text-gray-600">Additional Keywords</label>
+          <Input
+            value={additionalKeyword}
+            onChange={(e) => setAdditionalKeyword(e.target.value)}
+            placeholder="Optional refinement"
+          />
+        </div>
+
         <div className="flex items-end w-full sm:w-auto">
           <Button
             className="h-[42px]"
@@ -120,6 +132,7 @@ export default function ExploreSearchBar({ onSearch }: ExploreSearchBarProps) {
                 country: selectedCountry,
                 city,
                 keyword,
+                additionalKeyword,
               })
             }
           >

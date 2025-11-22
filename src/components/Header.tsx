@@ -50,14 +50,14 @@ export function Header() {
       : customerMenu;
 
   return (
-    <header className="bg-blue-600 text-white shadow-md">
-      <div className="container mx-auto flex items-center justify-between p-4">
+    <header className="bg-secondary text-foreground border-b">
+      <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
         {/* Logo */}
         <Link
           href="/"
-          className="text-white text-xl font-bold flex items-center gap-2"
+          className="text-lg font-semibold text-foreground hover:text-muted-foreground flex items-center gap-2"
         >
-          <span>DuDu</span>
+          DuDu
         </Link>
 
         {/* Desktop Menu */}
@@ -66,9 +66,9 @@ export function Header() {
             <Link
               key={item.name}
               href={item.href}
-              className="flex items-center gap-1 hover:text-gray-200"
+              className="flex items-center gap-1 text-foreground hover:text-muted-foreground"
             >
-              <item.icon size={20} className="text-white" />
+              <item.icon size={20} />
               {item.name}
             </Link>
           ))}
@@ -79,17 +79,17 @@ export function Header() {
                 logout();
                 setIsLoggedIn(false);
               }}
-              className="flex items-center gap-1 hover:text-gray-200"
+              className="flex items-center gap-1 text-foreground hover:text-muted-foreground"
             >
-              <LogOut size={20} className="text-white" />
+              <LogOut size={20} />
               Logout
             </button>
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1 hover:text-gray-200"
+              className="flex items-center gap-1 text-foreground hover:text-muted-foreground"
             >
-              <LogIn size={20} className="text-white" />
+              <LogIn size={20} />
               Login
             </Link>
           )}
@@ -97,25 +97,25 @@ export function Header() {
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden"
+          className="md:hidden text-foreground"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden bg-blue-700 px-4 pb-4 animate-slideDown">
+        <div className="md:hidden bg-secondary border-t px-4 pb-4 animate-slideDown">
           <nav className="flex flex-col gap-4 mt-2">
             {menu.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 text-white hover:text-gray-200"
+                className="flex items-center gap-2 text-foreground hover:text-muted-foreground"
               >
-                <item.icon size={20} className="text-white" />
+                <item.icon size={20} />
                 {item.name}
               </Link>
             ))}
@@ -127,7 +127,7 @@ export function Header() {
                   setIsLoggedIn(false);
                   setMobileOpen(false);
                 }}
-                className="flex items-center gap-2 text-left hover:text-gray-200"
+                className="flex items-center gap-2 text-left text-foreground hover:text-muted-foreground"
               >
                 <LogOut size={20} />
                 Logout
@@ -136,7 +136,7 @@ export function Header() {
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 hover:text-gray-200"
+                className="flex items-center gap-2 text-foreground hover:text-muted-foreground"
               >
                 <LogIn size={20} />
                 Login

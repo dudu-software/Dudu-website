@@ -9,34 +9,37 @@ export default function ExplorePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
   const [pageTokens, setPageTokens] = useState<string[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
-
   const [currentSearchParams, setCurrentSearchParams] = useState<{
     country: string;
     city: string;
     keyword: string;
+    additionalKeyword: string;
   } | null>(null);
 
   async function handleSearch(params: {
     country: string;
     city: string;
     keyword: string;
+    additionalKeyword: string;
   }) {
     if (!params.keyword) return;
-
     setCurrentSearchParams(params);
     setPageTokens([]);
     setPageIndex(0);
     setNextPageToken(null);
-
     await performSearch(params, null, 0);
   }
 
   async function performSearch(
-    params: { country: string; city: string; keyword: string },
+    params: {
+      country: string;
+      city: string;
+      keyword: string;
+      additionalKeyword: string;
+    },
     pagetoken: string | null,
     tokenIndex: number
   ) {
@@ -46,13 +49,12 @@ export default function ExplorePage() {
       const data = await fetchPlacesWithDetails({
         location,
         keyword: params.keyword,
+        additionalKeyword: params.additionalKeyword,
         apiKey,
         pagetoken,
       });
-
       setResults(data.results);
       setNextPageToken(data.nextPageToken);
-
       if (pagetoken) {
         const copyTokens = [...pageTokens];
         copyTokens[tokenIndex] = pagetoken;
@@ -88,7 +90,7 @@ export default function ExplorePage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">Explore Places</h1>
+      <h1 className="text-2xl font-semibold mb-4">Explore</h1>
       <ExploreSearchBar apiKey={apiKey} onSearch={handleSearch} />
       <ExploreTable
         results={results}

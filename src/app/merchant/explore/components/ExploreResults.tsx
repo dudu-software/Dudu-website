@@ -31,7 +31,7 @@ function isMobileLikePhone(phone?: string | null): boolean {
 
 function sortResultsList(
   list: any[],
-  sortMode: "phone_first" | "alphabetical" | "none"
+  sortMode: "phone_first" | "phone_rating" | "alphabetical" | "rating" | "none"
 ): any[] {
   const copy = [...list];
   if (sortMode === "phone_first") {
@@ -41,7 +41,6 @@ function sortResultsList(
 
       if (aHas === bHas) {
         if (aHas) {
-          // Both have phones - prioritize mobile numbers
           const aMobile = isMobileLikePhone(a.phone);
           const bMobile = isMobileLikePhone(b.phone);
           if (aMobile !== bMobile) {
@@ -54,10 +53,36 @@ function sortResultsList(
       }
       return aHas ? -1 : 1;
     });
+  } else if (sortMode === "phone_rating") {
+    // Phone first, then by rating within phone groups
+    copy.sort((a, b) => {
+      const aHas = !!a.phone;
+      const bHas = !!b.phone;
+
+      if (aHas === bHas) {
+        // Both have phone or both don't - sort by rating
+        const aRating = a.rating || 0;
+        const bRating = b.rating || 0;
+        if (aRating !== bRating) {
+          return bRating - aRating; // Higher rating first
+        }
+        // If ratings are equal, sort alphabetically
+        const an = (a.name || "").toLowerCase();
+        const bn = (b.name || "").toLowerCase();
+        return an.localeCompare(bn);
+      }
+      return aHas ? -1 : 1; // Phone first
+    });
   } else if (sortMode === "alphabetical") {
     copy.sort((a, b) =>
       (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase())
     );
+  } else if (sortMode === "rating") {
+    copy.sort((a, b) => {
+      const aRating = a.rating || 0;
+      const bRating = b.rating || 0;
+      return bRating - aRating;
+    });
   }
   return copy;
 }
@@ -73,8 +98,8 @@ export default function ExploreTable({
   loading,
 }: ExploreTableProps) {
   const [sortMode, setSortMode] = useState<
-    "phone_first" | "alphabetical" | "none"
-  >("phone_first");
+    "phone_first" | "phone_rating" | "alphabetical" | "rating" | "none"
+  >("phone_rating");
   const [sortedResults, setSortedResults] = useState<any[]>([]);
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
@@ -82,7 +107,9 @@ export default function ExploreTable({
     setSortedResults(sortResultsList(results, sortMode));
   }, [results, sortMode]);
 
-  function changeSort(mode: "phone_first" | "alphabetical" | "none") {
+  function changeSort(
+    mode: "phone_first" | "phone_rating" | "alphabetical" | "rating" | "none"
+  ) {
     setSortMode(mode);
     setSortDropdownOpen(false);
   }
@@ -117,12 +144,24 @@ export default function ExploreTable({
           </button>
 
           {sortDropdownOpen && (
-            <div className="absolute mt-2 bg-white border rounded shadow z-20 min-w-[180px]">
+            <div className="absolute mt-2 bg-white border rounded shadow z-20 min-w-[220px]">
+              <div
+                className="p-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
+                onClick={() => changeSort("phone_rating")}
+              >
+                Phone + Rating (default)
+              </div>
               <div
                 className="p-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
                 onClick={() => changeSort("phone_first")}
               >
-                Phone first (default)
+                Phone only
+              </div>
+              <div
+                className="p-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
+                onClick={() => changeSort("rating")}
+              >
+                Highest rating
               </div>
               <div
                 className="p-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
@@ -147,18 +186,26 @@ export default function ExploreTable({
 
       <div className="overflow-x-auto">
         <Table className="w-full border rounded-md">
+          <colgroup>
+            <col style={{ width: "100px" }} />
+            <col style={{ width: "200px" }} />
+            <col style={{ width: "280px" }} />
+            <col style={{ width: "150px" }} />
+            <col style={{ width: "120px" }} />
+          </colgroup>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20">Image</TableHead>
-              <TableHead className="w-1/4">Name</TableHead>
-              <TableHead className="w-1/3">Location</TableHead>
-              <TableHead className="w-1/6">Phone</TableHead>
+              <TableHead>Image</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Rating</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sortedResults.map((item, i) => (
               <TableRow key={item.id || i}>
-                <TableCell>
+                <TableCell style={{ maxWidth: "100px", width: "100px" }}>
                   <div className="w-20 h-16 bg-gray-100 rounded overflow-hidden">
                     {item.photoReference ? (
                       <img
@@ -175,18 +222,51 @@ export default function ExploreTable({
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="font-medium">
-                  <div className="flex flex-col">
-                    <span>{item.name}</span>
+                <TableCell
+                  className="font-medium"
+                  style={{
+                    maxWidth: "200px",
+                    width: "200px",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
+                  <div
+                    style={{
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    <div>{item.name}</div>
                     {item.types?.[0] && (
-                      <span className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-1">
                         {item.types[0].replaceAll("_", " ")}
-                      </span>
+                      </div>
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="text-sm">{item.address}</TableCell>
-                <TableCell>
+                <TableCell
+                  className="text-sm"
+                  style={{
+                    maxWidth: "280px",
+                    width: "280px",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
+                  {item.address}
+                </TableCell>
+                <TableCell
+                  style={{
+                    maxWidth: "150px",
+                    width: "150px",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
                   {item.phone ? (
                     <a
                       href={`tel:${item.phone}`}
@@ -198,12 +278,38 @@ export default function ExploreTable({
                     <span className="text-gray-400 text-sm">No phone</span>
                   )}
                 </TableCell>
+                <TableCell
+                  style={{
+                    maxWidth: "120px",
+                    width: "120px",
+                  }}
+                >
+                  {item.rating ? (
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <svg
+                        className="w-4 h-4 text-yellow-500 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span className="text-sm font-medium">{item.rating}</span>
+                      {item.userRatingsTotal && (
+                        <span className="text-xs text-gray-500">
+                          ({item.userRatingsTotal})
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-gray-400 text-sm">No rating</span>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
             {sortedResults.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={4}
+                  colSpan={5}
                   className="text-center py-6 text-gray-500"
                 >
                   No results found.

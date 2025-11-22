@@ -76,7 +76,8 @@ export default function MerchantLayout({ children }: { children: ReactNode }) {
       label: "Products",
       icon: <Package className="w-5 h-5" />,
       sub: [
-        { href: "/merchant/products", label: "Collections" },
+        { href: "/merchant/products", label: "Products" },
+        { href: "/merchant/collections", label: "Collections" },
         { href: "/merchant/inventory", label: "Inventory" },
       ],
     },
@@ -107,14 +108,14 @@ export default function MerchantLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside
         className={`
-          relative z-30 flex flex-col h-full bg-gray-100 border-r transition-all duration-200 ease-in-out
+          relative z-30 flex flex-col h-full bg-gray-100 border-border transition-all duration-200 ease-in-out
           ${open ? "w-64" : "w-16"}
           md:block
         `}
       >
         <div
           className={`
-            flex items-center gap-2 p-4 border-b bg-gray-100
+            flex items-center gap-2 p-4 border-border bg-gray-100
             ${open ? "justify-between" : "justify-center"}
           `}
         >
